@@ -1,0 +1,36 @@
+USE	workdb
+GO 
+
+
+/*임시테이블이 저럴경우 삭제 */
+
+IF OBJECT_ID('tempdb..#temp' , N'U') is not null
+drop table #temp	
+
+set nocount on
+set transaction isolation level read uncommitted
+
+create	table 	#temp (
+date	datetime  not null 
+)
+
+declare @int	int		set @int = 0
+declare		@kst	 datetime  set @kst = (select getdate() ) 
+declare		@utc	 datetime  set @utc = (select dateadd(hh, -9, getdate()) ) 
+declare		@asia_t	 datetime  set @asia_t = (select dateadd(hh, -8, getdate()) ) 
+
+
+while @int < 10000
+begin 
+
+insert into	#temp
+select @kst
+
+set	@int  =  @int + 1 
+
+end
+
+select top 100 *
+from	#temp 
+
+drop table #temp
