@@ -1,0 +1,40 @@
+import requests
+from bs4 import BeautifulSoup
+import time
+import datetime
+
+#잡코리아
+
+f =  open('C:/Users/user/raw/jobkorea_apply_urls.csv', 'w')
+f.write("date,회사명,직무,URL,경력,위치,지원방식" + '\n')
+
+keyword = '키워드 데이터 분석' #키워드 입력
+
+#페이지순서
+for n in range(1,20)  :
+    raw = requests.get("https://www.jobkorea.co.kr/Search/?stext={}&tabType=recruit&Page_No=".format(keyword) +str(n)
+                   , headers ={'User-Agent':'Mozilla/5.0'})
+    html = BeautifulSoup(raw.text, "html.parser")
+    results = html.select("li.list-post")
+    
+    for ar in results[0:20] : 
+        company_name = ar.select_one("a.name").text.strip() 
+        detail = ar.select_one("a.title").text.strip()  
+        url =   'https://www.jobkorea.co.kr'+ar.find("a")['href']
+        exp =   ar.select_one("span.exp").text.strip()
+        location = ar.select_one("span.loc").text.strip()
+        apply = ar.select_one("div.post-list-apply").text.strip()
+        company_name = company_name.replace(",", "")
+        detail = detail.replace(",", "")
+        location = location.replace(" 외", "")
+        now = datetime.datetime.now()
+        nowDate = now.strftime('%Y-%m-%d')
+        f.write(nowDate + ',' + company_name + ',' + detail + ',' + url + ',' + exp + ',' + location +','+ apply+'\n') 
+        time.sleep(1) #1초
+
+    print(str(n)+"번째 페이지 내 " + str(keyword) + " 의 채용공고 크롤링을 완료했습니다.")
+    print("최종 엑셀 작업 마무리중 입니다.")
+  
+f.close()
+
+print("잡코리아 크롤링이 완료되었습니다.")
