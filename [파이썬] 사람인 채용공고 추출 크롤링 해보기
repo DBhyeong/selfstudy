@@ -1,0 +1,40 @@
+import requests
+from bs4 import BeautifulSoup
+import time
+import datetime
+
+f_2 =  open('C:/Users/user/raw/saramin_apply.csv', 'w', encoding='utf-8-sig')
+f_2.write("date,회사명,직무,URL,지원방식"+'\n')
+
+# 페이지순서
+
+keyword = '키워드 데이터 분석'
+
+
+for page_num in  range(1, 5) : 
+    raw = requests.get('https://www.saramin.co.kr/zf_user/search/recruit?search_area=main&search_done=y&search_optional_item=n&searchType=search&searchword={}&recruitPage={}&recruitSort=relation&recruitPageCount=100'.format(keyword, page_num) 
+                       , headers ={'User-Agent':'Mozilla/5.0'})
+    html = BeautifulSoup(raw.text, "html.parser")
+    results = html.select("div.item_recruit")
+    for ar in results : 
+        title = ar.select_one("a")['title'] #제목
+        url =  "https://www.saramin.co.kr" +ar.select_one("a")['href'] #URL
+        name = ar.select_one("div.area_corp")
+        name2 = ar.select_one('div.area_corp > strong > a').text.strip()  #회사명
+        title = title.replace(",", "")
+        name2 = name2.replace(",", "")
+        now = datetime.datetime.now()
+        nowDate = now.strftime('%Y-%m-%d')
+        try :
+            apply = ar.select_one("button.sri_btn_xs").text
+        except :
+            apply = "홈페이지지원"
+        f_2.write(nowDate + ',' + name2 + ','+ title + ',' + url +',' + apply +'\n')
+        time.sleep(1)
+    print(str(page_num) +"의 페이지 내 " +str(keyword)+ "의 채용공고 크롤링을 완료했습니다.")
+    print("최종 엑셀 작업 마무리중 입니다.")
+
+f_2.close()
+
+
+print("사람인 최종 크롤링이 완료되었습니다.")
