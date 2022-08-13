@@ -1,0 +1,91 @@
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#한국저작권위원회_저작권등록정보서비스
+#저작권등록정보에 대한 통합검색목록을 조회
+
+
+serviceKey = '' #api 키 발급
+
+contTitle = '뽕'
+
+url = 'http://openapi.copyright.or.kr/openapi/service/rest/CpyrRegInforService/getCpyrRegInforUniList?serviceKey={}&contTitle={}'.format(serviceKey, contTitle)
+
+response = requests.get(url, verify=False)
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+dict_data = xmltodict.parse(response.text) #xml을 json로 변환
+json_data = json.dumps(dict_data, ensure_ascii=False)  #한글이 깨지면 ensure_ascii 코드를 False로 하면됨.
+r_data = json.loads(json_data)  #json 변환
+
+
+#Shape of passed values is (2, 4), indices imply (1, 4)
+#data = pd.DataFrame(r_data['response']['body']['items']['item'])  이걸로 넣어주면 됨.
+
+
+#If using all scalar values, you must pass an index 에러 문구가 뜰 경우, index=[0]
+#data = pd.DataFrame(r_data['response']['body']['items']['item'], index=[0]) 이렇게 바꿔주면됨.
+
+try :
+    data = pd.DataFrame(r_data['response']['body']['items']['item'])
+except :
+    data = pd.DataFrame(r_data['response']['body']['items']['item'], index=[0])  #데이터프레임으로 보자 
+
+data
+
+
+
+#출력값
+
+#authorName    저작물의 제작자 및 제작회사
+#contTitle     저작물의 명칭
+#regDate       저작물의 등록일자 Date type으로 크기 항목크기 없음
+#regId         저작물의 고유 등록번호
+
+
+
+#저작권등록정보 통합검색상세 조회
+#저작권등록정보에 대한 통합검색상세내용을 조회
+
+serviceKey = '' #api 키 발급
+regId='C-2015-012052' #저작물의 고유 등록번호
+
+url ='http://openapi.copyright.or.kr/openapi/service/rest/CpyrRegInforService/getCpyrRegInforUniDetail?serviceKey={}&regId={}'.format(serviceKey, regId)
+
+response = requests.get(url, verify=False)
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+dict_data = xmltodict.parse(response.text) #xml을 json로 변환
+json_data = json.dumps(dict_data, ensure_ascii=False)  #한글이 깨지면 ensure_ascii 코드를 False로 하면됨.
+r_data = json.loads(json_data)  #json 변환
+
+try :
+    data = pd.DataFrame(r_data['response']['body']['item'])
+except :
+    data = pd.DataFrame(r_data['response']['body']['item'], index=[0])  #데이터프레임으로 보자 
+
+data
+
+#출력값
+
+#authorName       저작물의 제작자 및 제작회사
+#contClassName    저작물별 종류 ex)어문,음반,건축등
+#contTitle        저작물의 명칭
+#disposalAddr1    저작물의 등록 후 권리자 (일반적으로 저작자)
+#disposalName     등록 권리자의 주소
+#regDate          저작물의 등록일자 Date type으로 크기 항목크기 없음
+#regId            저작물의 고유 등록번호
+#regPart1Name     저작물의 등록 부문
+#regPart2Name     저작물의 등록 부문에 대한 내용
+#regReason        저작물을 등록하게 되는 이유 ex) 질권소멸,양도,창작,음고정 등
+
+
