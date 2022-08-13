@@ -1,0 +1,99 @@
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+warnings.filterwarnings('ignore')
+
+#https://www.crimestats.or.kr/portal/openapi/openApiActKeyPage.do#
+
+#인증키
+
+#https://www.crimestats.or.kr/portal/openapi/openApiGuideCdPage.do #통계코드는 해당 기일을 보자.
+
+key = ''   #키 발급
+Type = 'json'
+pIndex = '1'
+pSize = '100'
+
+STATBL_ID = 'T184463021456318'
+DTACYCLE_CD = 'YY'
+WRTTIME_IDTFR_ID = '2018'
+
+
+url = 'https://www.crimestats.or.kr/openapi/Sttsapitbldata.do?STATBL_ID={}&DTACYCLE_CD={}&WRTTIME_IDTFR_ID={}'.format(STATBL_ID, DTACYCLE_CD, WRTTIME_IDTFR_ID)
+response = requests.get(url, verify=False)
+
+dict_data = xmltodict.parse(response.text) #xml을 json로 변환
+json_data = json.dumps(dict_data, ensure_ascii=False)  #한글이 깨지면 ensure_ascii 코드를 False로 하면됨.
+r_data = json.loads(json_data)  #json 변환
+
+data = pd.DataFrame(r_data['Sttsapitbldata']['row'])  #데이터프레임으로 보자
+data #오나료
+
+#출력값
+#STATBL_ID	통계표ID
+#DTACYCLE_CD	자료주기
+#WRTTIME_IDTFR_ID	자료시점
+#ITM_ID		항목ID
+#ITM_NM		항목명
+#CLS_ID		분류ID
+#CLS_NM		분류명
+#UI_NM	단위명
+#DTA_VAL	통계자료값
+#DTA_SVAL	통계기호
+
+
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+
+warnings.filterwarnings('ignore')
+
+#https://www.crimestats.or.kr/portal/openapi/openApiActKeyPage.do#
+
+#https://www.crimestats.or.kr/portal/openapi/openApiGuideCdPage.do #통계코드는 해당 기일을 보자.
+
+KEY = ''  #인증키
+Type = 'json'
+pIndex = '1'
+pSize = '100'
+
+STATBL_ID = 'T184463021456318'    #통계표ID
+DTACYCLE_CD = 'YY'  #자료주기
+#WRTTIME_IDTFR_ID = '2018' #자료시점
+#ITM_ID =   #항목ID
+#CLS_ID = #분류ID
+
+url = 'https://www.crimestats.or.kr/openapi/Sttsapitbldata.do?KEY={}&Type={}&pIndex={}&pSize={}&STATBL_ID={}&DTACYCLE_CD={}'.format(KEY,Type,pIndex,pSize, STATBL_ID, DTACYCLE_CD)
+response = requests.get(url, verify=False)
+response.text
+#dict_data = xmltodict.parse(response.text) #xml을 json로 변환
+#json_data = json.dumps(dict_data, ensure_ascii=False)  #한글이 깨지면 ensure_ascii 코드를 False로 하면됨.
+r_data = json.loads(response.text)  #json 변환
+data = pd.DataFrame(r_data['Sttsapitbldata'][1]['row'])  #데이터프레임으로 보자
+data #완료
+
+#출력값
+#STATBL_ID	통계표ID
+#DTACYCLE_CD	자료주기
+#WRTTIME_IDTFR_ID	자료시점
+#ITM_ID		항목ID
+#ITM_NM		항목명
+#CLS_ID		분류ID
+#CLS_NM		분류명
+#UI_NM	단위명
+#DTA_VAL	통계자료값
+#DTA_SVAL	통계기호
