@@ -1,0 +1,201 @@
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15073861
+#통보코드와 통보시간으로 예보정보와 발생 원인 정보를 조회하는 대기질(미세먼지/오존) 예보통보 조회
+
+warnings.filterwarnings('ignore')
+
+param = 'getMinuDustFrcstDspth' 
+
+# getMinuDustFrcstDspth 통보코드와 통보시간으로 예보정보와 발생 원인 정보를 조회하는 대기질(미세먼지/오존) 예보통보 조회
+
+serviceKey = '' #API 키 입력
+returnType = 'json'
+searchDate = '2022-08-10'
+
+url = 'http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/{}?serviceKey={}&returnType={}&searchDate={}'.format(param,serviceKey, returnType, searchDate)
+
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+response = requests.get(url, verify=False)
+r_data = response.json()
+
+#r_data
+
+
+try :
+    data = pd.DataFrame(r_data['response']['body']['items'])
+except :
+    data = pd.DataFrame(r_data['response']['body']['items'], index=[0])  #데이터프레임으로 보자 
+
+data
+
+
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+warnings.filterwarnings('ignore')
+
+param = 'getMinuDustWeekFrcstDspth' 
+
+# getMinuDustWeekFrcstDspth 통보코드와 통보시간으로 대기질 전망과 주간예보 정보를 조회하는 초미세먼지 주간예보통보 조회
+
+serviceKey = '' #API키 입력
+returnType = 'json'
+searchDate = '2022-08-10'
+
+url = 'http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/{}?serviceKey={}&returnType={}&searchDate={}'.format(param,serviceKey, returnType, searchDate)
+
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+response = requests.get(url, verify=False)
+r_data = response.json()
+r_data
+
+try :
+    data = pd.DataFrame(r_data['response']['body']['items'])
+except :
+    data = pd.DataFrame(r_data['response']['body']['items'], index=[0])  #데이터프레임으로 보자 
+
+data
+
+
+
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+warnings.filterwarnings('ignore')
+
+param = 'getMsrstnAcctoRltmMesureDnsty' 
+
+# getMsrstnAcctoRltmMesureDnsty 측정소명과 측정데이터 기간(일,한달,3개월)으로 해당 측정소의 일반항목 측정정보를 제공하는 측정소별 실시간 측정정보조회
+
+serviceKey = '' #API 키 입력
+returnType = 'json'
+stationName = '마포구' # 측정소 이름
+dataTerm = 'MONTH'  #요청 데이터기간(1일: DAILY, 1개월: MONTH, 3개월: 3MONTH)
+numOfRows = '100'  #한 페이지 결과수
+#pageNo = 1 #페이지번호
+
+url = 'http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/{}?serviceKey={}&returnType={}&stationName={}&dataTerm={}&numOfRows={}'.format(param, serviceKey, returnType, stationName, dataTerm, numOfRows)
+
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+response = requests.get(url, verify=False)
+r_data = response.json()
+
+r_data
+
+
+try :
+    data = pd.DataFrame(r_data['response']['body']['items'])
+except :
+    data = pd.DataFrame(r_data['response']['body']['items'], index=[0])  #데이터프레임으로 보자 
+
+data
+
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+warnings.filterwarnings('ignore')
+
+param = 'getUnityAirEnvrnIdexSnstiveAboveMsrstnList' 
+
+# getUnityAirEnvrnIdexSnstiveAboveMsrstnList 통합대기환경지수가 나쁨 등급 이상인 측정소명과 주소 목록 정보를 제공하는 통합대기환경지수 나쁨 이상 측정소 목록조회
+
+serviceKey = '' #API 키 입력
+returnType = 'json'
+numOfRows = '100'  #한 페이지 결과수
+pageNo = 1 #페이지번호
+
+url = 'http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/{}?serviceKey={}&returnType={}&numOfRows={}&pageNo={}'.format(param, serviceKey, returnType, numOfRows, pageNo)
+
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+response = requests.get(url, verify=False)
+r_data = response.json()
+r_data
+
+try :
+    data = pd.DataFrame(r_data['response']['body']['items'])
+except :
+    data = pd.DataFrame(r_data['response']['body']['items'], index=[0])  #데이터프레임으로 보자 
+
+data
+
+
+
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+warnings.filterwarnings('ignore')
+
+param = 'getCtprvnRltmMesureDnsty' 
+
+# getCtprvnRltmMesureDnsty 시도명을 검색조건으로 하여 시도별 측정소목록에 대한 일반 항목과 CAI최종 실시간 측정값과 지수 정보 조회 기능을 제공하는 시도별 실시간 측정정보 조회
+
+serviceKey = '' #API 키 입력
+returnType = 'json'
+numOfRows = '100'  #한 페이지 결과수
+pageNo = 1 #페이지번호
+sidoName = '전국' #시도 이름(전국, 서울, 부산, 대구, 인천, 광주, 대전, 울산, 경기, 강원, 충북, 충남, 전북, 전남, 경북, 경남, 제주, 세종)
+
+url = 'http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/{}?serviceKey={}&returnType={}&numOfRows={}&pageNo={}&sidoName={}'.format(param, serviceKey, returnType, numOfRows, pageNo, sidoName)
+
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+response = requests.get(url, verify=False)
+r_data = response.json()
+r_data
+
+try :
+    data = pd.DataFrame(r_data['response']['body']['items'])
+except :
+    data = pd.DataFrame(r_data['response']['body']['items'], index=[0])  #데이터프레임으로 보자 
+
+data
+
+
+
+
