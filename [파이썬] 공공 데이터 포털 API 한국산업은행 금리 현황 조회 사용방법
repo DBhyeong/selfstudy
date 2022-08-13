@@ -1,0 +1,39 @@
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#한국산업은행_금리 현황
+#대출(개인대출, 기업대출, 신탁대출) 및 예수금(수시입출금, 정기예금, 정기적금), 산업금융채권, CD, RP 등 금융상품별 취급 금리를 공공데이터로 개방
+#https://www.data.go.kr/tcs/dss/selectFileDataDetailView.do?publicDataPk=15008289#tab-layer-file
+
+warnings.filterwarnings('ignore')
+
+page= '1'
+perPage= '10'
+serviceKey='' #api 키 발급
+
+#interest_rates = 'uddi:15bde8bc-1bd5-4817-8df1-985518b66c2e'  #개인용
+interest_rates = 'uddi:7962e64e-c332-471c-9dd0-b3129c0c2291'  #상품1
+
+
+url = 'https://api.odcloud.kr/api/15008289/v1/{}?page={}&perPage={}&serviceKey={}'.format(interest_rates, page, perPage, serviceKey)
+
+response = requests.get(url, verify=False)
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+#response.text
+
+#dict_data = xmltodict.parse(response.text) #xml을 json로 변환
+#json_data = json.dumps(dict_data, ensure_ascii=False)  #한글이 깨지면 ensure_ascii 코드를 False로 하면됨.
+
+r_data = json.loads(response.text)  #json 변환
+data = pd.DataFrame(r_data['data'])  #데이터프레임으로 보자
+data #완료
+
