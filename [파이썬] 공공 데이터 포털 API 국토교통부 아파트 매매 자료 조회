@@ -1,0 +1,76 @@
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#국토교통부_아파트 매매 자료
+
+#지역코드와 기간을 이용하여 해당기간, 해당지역의 아파트 매매 신고자료를 제공하는 아파트 매매 신고 정보 조회
+
+warnings.filterwarnings('ignore')
+
+serviceKey = '' #api 키 발급
+LAWD_CD = '11110'  #각 지역별 코드 (각 지역별 코드 행정표준코드관리시스템(www.code.go.kr)의 법정동코드 10자리 중 앞 5자리)
+DEAL_YMD = '201512' #월 단위 신고자료 (실거래 자료의 계약년월(6자리))
+
+
+url = 'http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?serviceKey={}&LAWD_CD={}&DEAL_YMD={}'.format(serviceKey, LAWD_CD, DEAL_YMD)
+
+response = requests.get(url, verify=False)
+
+#HTTPSConnectionPool(host='www.work.go.1kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+dict_data = xmltodict.parse(response.text) #xml을 json로 변환
+json_data = json.dumps(dict_data, ensure_ascii=False)  #한글이 깨지면 ensure_ascii 코드를 False로 하면됨.
+r_data = json.loads(json_data)  #json 변환
+
+#print(json_data)
+
+
+try :
+    data = pd.DataFrame(r_data['response']['body']['items']['item'])
+except :
+    data = pd.DataFrame(r_data['response']['body']['items']['item'], index=[0])  #데이터프레임으로 보자 
+
+data
+
+
+
+#국토교통부_아파트매매 상세자료
+
+#지역코드와 기간을 이용하여 해당기간, 해당지역의 아파트 매매 신고자료를 제공하는 아파트 매매 신고 정보 조회
+
+warnings.filterwarnings('ignore')
+
+ServiceKey = '' #API 키 발급
+pageNo = '1' #페이지번호
+numOfRows = '100' #한 페이지 결과 수
+LAWD_CD = '11110' #지역코드
+DEAL_YMD = '202012' #계약월
+
+url = 'http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev?serviceKey={}&pageNo={}&numOfRows={}&LAWD_CD={}&DEAL_YMD={}'.format(ServiceKey, pageNo, numOfRows, LAWD_CD, DEAL_YMD)
+
+response = requests.get(url, verify=False)
+
+dict_data = xmltodict.parse(response.text) #xml을 json로 변환
+json_data = json.dumps(dict_data, ensure_ascii=False)  #한글이 깨지면 ensure_ascii 코드를 False로 하면됨.
+r_data = json.loads(json_data)  #json 변환
+
+#data = r_data['response']['body']['items']['item']
+
+#pdata = pd.DataFrame(data)
+#pdata
+
+
+try :
+    data = pd.DataFrame(r_data['response']['body']['items']['item'])
+except :
+    data = pd.DataFrame(r_data['response']['body']['items']['item'], index=[0])  #데이터프레임으로 보자 
+
+data
