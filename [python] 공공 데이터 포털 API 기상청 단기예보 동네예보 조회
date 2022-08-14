@@ -1,0 +1,98 @@
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+warnings.filterwarnings('ignore')
+
+#초단기예보조회
+#초단기예보정보를 조회하기 위해 발표일자, 발표시각, 예보지점 X 좌표, 예보지점 Y 좌표의 조회 조건으로 자료구분코드, 예보값, 발표일자, 발표시각, 예보지점 X 좌표, 예보지점 Y 좌표의 정보를 조회하는 기능
+
+serviceKey='' #api 키
+pageNo = '1' #페이지번호
+numOfRows = '10' #한 페이지 결과 수
+dataType = 'json' #요청자료형식(XML/JSON) Default: XML
+base_date = '20220813' #‘22년 8월 13일 발표
+base_time='0630' #06시30분 발표(30분 단위)
+nx='55'  #예보지점 X 좌표값
+ny='127'  #예보지점 Y 좌표값
+
+url = 'https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?serviceKey={}&pageNo={}&numOfRows={}&dataType={}&base_date={}&base_time={}&nx={}&ny={}'.format(serviceKey,pageNo,numOfRows,dataType,base_date,base_time,nx,ny)
+
+response = requests.get(url, verify=False)
+#dict_data = xmltodict.parse(response.text)
+#json_data = json.dumps(dict_data, ensure_ascii=False)
+r_data = json.loads(response.text)
+
+
+#Shape of passed values is (2, 4), indices imply (1, 4)
+#data = pd.DataFrame(r_data['response']['body']['items']['item'])  이걸로 넣어주면 됨.
+
+#If using all scalar values, you must pass an index 에러 문구가 뜰 경우, index=[0]
+#data = pd.DataFrame(r_data['response']['body']['items']['item'], index=[0]) 이렇게 바꿔주면됨.
+
+
+#columns=r_data['header']['columns']
+
+try : 
+    data = pd.DataFrame(r_data['response']['body']['items']['item'])  
+except :
+    data = pd.DataFrame(r_data['response']['body']['items']['item'], index = [0])
+
+#data.columns = r_data['header']['columns'] #컬럼변경
+
+data
+
+
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+warnings.filterwarnings('ignore')
+
+#예보버전조회
+#단기예보정보조회서비스 각각의 오퍼레이션(초단기실황, 초단기예보, 단기예보)들의 수정된 예보 버전을 파악하기 위해 예보버전을 조회하는 기능
+
+serviceKey='' #api 키
+pageNo = '1' #페이지번호
+numOfRows = '1000' #한 페이지 결과 수
+dataType = 'json' #요청자료형식(XML/JSON) Default: XML
+ftype = 'SHRT' #파일구분 -ODAM: 동네예보실황 -VSRT: 동네예보초단기 -SHRT: 동네예보단기
+basedatetime='202208141000' #각각의 base_time 로 검색
+
+url = 'https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getFcstVersion?serviceKey={}&pageNo={}&numOfRows={}&dataType={}&ftype={}&basedatetime={}'.format(serviceKey,pageNo,numOfRows,dataType,ftype,basedatetime)
+
+response = requests.get(url, verify=False)
+#dict_data = xmltodict.parse(response.text)
+#json_data = json.dumps(dict_data, ensure_ascii=False)
+r_data = json.loads(response.text)
+
+r_data
+#Shape of passed values is (2, 4), indices imply (1, 4)
+#data = pd.DataFrame(r_data['response']['body']['items']['item'])  이걸로 넣어주면 됨.
+
+#If using all scalar values, you must pass an index 에러 문구가 뜰 경우, index=[0]
+#data = pd.DataFrame(r_data['response']['body']['items']['item'], index=[0]) 이렇게 바꿔주면됨.
+
+
+#columns=r_data['header']['columns']
+
+#try : 
+#    data = pd.DataFrame(r_data['body']['items'])  
+#except :
+#    data = pd.DataFrame(r_data['body']['items'], index = [0])
+
+#data.columns = r_data['header']['columns'] #컬럼변경
+
+#data
