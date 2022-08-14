@@ -1,0 +1,30 @@
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#한국산업은행_기금대출 정보
+#한국산업은행 기금대출(국가정책사업의 원활한 수행을 위해 정부 등이 조성한 기금을 한국산업은행이 차입하여 실수요자에게 대출하는 제도) 정보제공
+
+warnings.filterwarnings('ignore')
+
+serviceKey='' #api 키 발급
+pageNo = '1'
+numOfRows = '100'
+bseYy = '2022'
+url = 'https://apis.data.go.kr/B190030/GetFundLoanInfoService/getFundLoanList?serviceKey={}&pageNo={}&numOfRows={}&bseYy={}'.format(serviceKey,pageNo,numOfRows,bseYy)
+response = requests.get(url, verify=False)
+dict_data = xmltodict.parse(response.text)
+json_data = json.dumps(dict_data, ensure_ascii=False)
+r_data = json.loads(json_data)
+try : 
+    data = pd.DataFrame(r_data['response']['body']['items']['item'])  #데이터프레임으로 보자
+except :
+    data = pd.DataFrame(r_data['response']['body']['items']['item'], index=[0])
+
+data
