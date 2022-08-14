@@ -1,0 +1,100 @@
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#기상청_관광코스별 관광지 상세 날씨 조회서비스
+#관광코스별 관광지의 동네예보, 기상지수예보, 시군구별 관광기후지수 정보를 조회하는 서비스
+
+
+#시군구별관광기후지수조회
+#조회조건(현재시각, 예보기간, 시군구 아이디)으로 시군구별 관광기후지수 데이터(시군구이름, 관광기후지수, 관광기후등급 등)를 조회하는 기능
+
+warnings.filterwarnings('ignore')
+
+serviceKey='' #공공데이터포털에서 받은 인증키
+pageNo = '1'  #페이지번호
+numOfRows = '100' #한 페이지 결과 수
+dataType = 'json'  #요청자료형식(XML/JSON)
+CURRENT_DATE ='2021081010'  #2018-12-31 00시부터 조회
+DAY = '3'  #CURRENT_DATE부터 입력값까지의 자료 호출
+CITY_AREA_ID = '5013000000' #시군구아이디
+
+url ='https://apis.data.go.kr/1360000/TourStnInfoService/getCityTourClmIdx?serviceKey={}&pageNo={}&numOfRows={}&dataType={}&CURRENT_DATE={}&DAY={}&CITY_AREA_ID={}'.format(serviceKey,pageNo, numOfRows,dataType , CURRENT_DATE, DAY, CITY_AREA_ID)
+
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+response = requests.get(url, verify=False)
+#dict_data = xmltodict.parse(response.text)
+#json_data = json.dumps(dict_data, ensure_ascii=False)
+r_data = json.loads(response.text)
+
+
+#Shape of passed values is (2, 4), indices imply (1, 4)
+#data = pd.DataFrame(r_data['response']['body']['items']['item'])  이걸로 넣어주면 됨.
+
+#If using all scalar values, you must pass an index 에러 문구가 뜰 경우, index=[0]
+#data = pd.DataFrame(r_data['response']['body']['items']['item'], index=[0]) 이렇게 바꿔주면됨.
+
+
+try : 
+    data = pd.DataFrame(r_data['response']['body']['items']['item'])  
+except :
+    data = pd.DataFrame(r_data['response']['body']['items']['item'], index = [0])
+
+#data.columns = r_data['response']['columns'] #컬럼변경
+
+data
+
+# 간혹 밑의 에러가 뜨는 경우가 있음. 
+#'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><response><header><resultCode>99</resultCode><resultMsg>SERVICE KEY IS NOT REGISTERED ERROR.</resultMsg></header></response>'
+# 그럴 경우, https://www.data.go.kr/iim/api/selectAPIAcountView.do 에 들어가서
+# 미리보기로 테스트 진행 이후 해당 service key를 넣어주면은 정상 작동됨.(utf -8 인코딩 문제인듯)
+
+
+
+
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#기상청_관광코스별 관광지 상세 날씨 조회서비스
+#관광코스별 관광지의 동네예보, 기상지수예보, 시군구별 관광기후지수 정보를 조회하는 서비스
+
+#기상지수예보조회
+#조회조건(현재시각, 예보기간, 코스ID)으로 기상지수예보 데이터 (코스명, 관광지명, 테마, 식중독지수, 체감온도, 자외선지수 등)를 조회하는 기능
+
+warnings.filterwarnings('ignore')
+
+serviceKey='' #공공데이터포털에서 받은 인증키
+pageNo = '1'  #페이지번호
+numOfRows = '100' #한 페이지 결과 수
+dataType = 'json'  #요청자료형식(XML/JSON)
+CURRENT_DATE ='2019122010'  #2018-12-31 00시부터 조회
+HOUR = '24'   #CURRENT_DATE부터 24시간 후까지의 자료 호출
+COURSE_ID = '1'  #관광 코스ID
+
+url ='https://apis.data.go.kr/1360000/TourStnInfoService/getTourStnWthrIdx?serviceKey={}&pageNo={}&numOfRows={}&dataType={}&CURRENT_DATE={}&HOUR={}&COURSE_ID={}'.format(serviceKey,pageNo,numOfRows,dataType,CURRENT_DATE,HOUR,COURSE_ID)
+response = requests.get(url, verify=False)
+#dict_data = xmltodict.parse(response.text)
+#json_data = json.dumps(dict_data, ensure_ascii=False)
+r_data = json.loads(response.text)
+
+try : 
+    data = pd.DataFrame(r_data['response']['body']['items']['item'])  
+except :
+    data = pd.DataFrame(r_data['response']['body']['items']['item'], index = [0])
+data
+
