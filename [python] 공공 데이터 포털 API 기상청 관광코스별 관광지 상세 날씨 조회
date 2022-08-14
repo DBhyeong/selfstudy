@@ -98,3 +98,40 @@ except :
     data = pd.DataFrame(r_data['response']['body']['items']['item'], index = [0])
 data
 
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#기상청_관광코스별 관광지 상세 날씨 조회서비스
+#관광코스별 관광지의 동네예보, 기상지수예보, 시군구별 관광기후지수 정보를 조회하는 서비스
+
+#동네예보조회
+#조회조건(현재시각, 예보기간, 코스ID)으로 동네예보 데이터(코스명, 관광지명, 테마, 기온, 습도 등)를 조회하는 기능
+
+warnings.filterwarnings('ignore')
+
+serviceKey='' #공공데이터포털에서 받은 인증키
+pageNo = '1'  #페이지번호
+numOfRows = '100' #한 페이지 결과 수
+dataType = 'json'  #요청자료형식(XML/JSON)
+CURRENT_DATE ='2019122010'  #2018-12-31 00시부터 조회
+HOUR = '24'   #CURRENT_DATE부터 24시간 후까지의 자료 호출
+COURSE_ID = '1'  #관광 코스ID
+
+url ='https://apis.data.go.kr/1360000/TourStnInfoService/getTourStnVilageFcst?serviceKey={}&pageNo={}&numOfRows={}&dataType={}&CURRENT_DATE={}&HOUR={}&COURSE_ID={}'.format(serviceKey,pageNo,numOfRows,dataType,CURRENT_DATE,HOUR,COURSE_ID)
+response = requests.get(url, verify=False)
+#dict_data = xmltodict.parse(response.text)
+#json_data = json.dumps(dict_data, ensure_ascii=False)
+r_data = json.loads(response.text)
+
+try : 
+    data = pd.DataFrame(r_data['response']['body']['items']['item'])  
+except :
+    data = pd.DataFrame(r_data['response']['body']['items']['item'], index = [0])
+data
