@@ -1,0 +1,93 @@
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+warnings.filterwarnings('ignore')
+
+#지정 상권조회	
+#주요상권의 영역좌표를 조회하는 기능으로 지정된 상권번호에 해당하는 단일 상권정보를 조회	
+
+serviceKey='' #공공데이터포털에서 받은 인증키
+key = '9174' #조회 대상 상권의 상권번호
+type = 'json' #xml / json
+
+url = 'https://apis.data.go.kr/B553077/api/open/sdsc2/storeZoneOne?serviceKey={}&key={}&type={}'.format(serviceKey,key,type)
+
+
+response = requests.get(url, verify=False)
+#dict_data = xmltodict.parse(response.text)
+#json_data = json.dumps(dict_data, ensure_ascii=False)
+r_data = json.loads(response.text)
+
+
+#Shape of passed values is (2, 4), indices imply (1, 4)
+#data = pd.DataFrame(r_data['response']['body']['items']['item'])  이걸로 넣어주면 됨.
+
+#If using all scalar values, you must pass an index 에러 문구가 뜰 경우, index=[0]
+#data = pd.DataFrame(r_data['response']['body']['items']['item'], index=[0]) 이렇게 바꿔주면됨.
+
+
+#columns=r_data['header']['columns']
+
+try : 
+    data = pd.DataFrame(r_data['body']['items'])  
+except :
+    data = pd.DataFrame(r_data['body']['items'], index = [0])
+
+data.columns = r_data['header']['columns'] #컬럼변경
+
+data
+
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+warnings.filterwarnings('ignore')
+
+#업종별 상가업소 조회
+#입력 업종에 해당하는 업소목록 조회
+
+serviceKey='' #공공데이터포털에서 받은 인증키
+pageNo = '1'   #현재 요청 페이지번호
+numOfRows = '10'  #최대 1000
+divId = 'indsLclsCd' #대분류는 indsLclsCd, 중분류는 indsMclsCd, 소분류는 indsSclsCd를 사용
+key = 'Q' #대분류는 대분류코드값, 중분류는 중분류코드값, 소분류는 소분류코드값을 사용
+type = 'json' #xml / json
+
+url = 'https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInUpjong?serviceKey={}&pageNo={}&numOfRows={}&divId={}&key={}&type={}'.format(serviceKey,pageNo,numOfRows,divId,key,type)
+
+response = requests.get(url, verify=False)
+#dict_data = xmltodict.parse(response.text)
+#json_data = json.dumps(dict_data, ensure_ascii=False)
+r_data = json.loads(response.text)
+
+
+#Shape of passed values is (2, 4), indices imply (1, 4)
+#data = pd.DataFrame(r_data['response']['body']['items']['item'])  이걸로 넣어주면 됨.
+
+#If using all scalar values, you must pass an index 에러 문구가 뜰 경우, index=[0]
+#data = pd.DataFrame(r_data['response']['body']['items']['item'], index=[0]) 이렇게 바꿔주면됨.
+
+
+#columns=r_data['header']['columns']
+
+try : 
+    data = pd.DataFrame(r_data['body']['items'])  
+except :
+    data = pd.DataFrame(r_data['body']['items'], index = [0])
+
+data.columns = r_data['header']['columns'] #컬럼변경
+
+data
