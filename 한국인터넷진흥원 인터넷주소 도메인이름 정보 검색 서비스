@@ -1,0 +1,188 @@
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#인터넷주소자원 중 도메인 이름의 등록정보 및 할당정보 조회
+#한국인터넷진흥원이 관리하는 인터넷주소자원인 도메인 이름(.kr, .한국) 등록정보(등록일, 만료일, 등록인 이름, 관리자 연락처, 네임서버 등)를 조회. (.net, com 등 해외 TLD 도메인은 지원하지 않습니다.)
+
+warnings.filterwarnings('ignore')
+
+serviceKey = ''  #인증키
+
+query = 'kisa.co.kr'  #도메인이름
+
+url = 'https://apis.data.go.kr/B551505/whois/domain_name?serviceKey={}&query={}&answer=json'.format(serviceKey, query)
+
+response = requests.get(url, verify=False)
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+
+r_data = json.loads(response.text)  #json 으로 받기
+#r_data
+
+#dict_data = xmltodict.parse(response.text) #xml을 json로 변환
+#json_data = json.dumps(dict_data, ensure_ascii=False)  #한글이 깨지면 ensure_ascii 코드를 False로 하면됨.
+#r_data = json.loads(json_data)  #json 변환
+
+
+#json 에서 DataFrame 변환시 All arrays must be of the same length 오류해결
+#해결방법은  orient = index를 넣어 주면은 해결된다.
+
+
+try :
+    df = pd.DataFrame.from_dict(r_data['response']['whois']['krdomain'], orient='index')
+except :
+    df = pd.DataFrame.from_dict(r_data['response']['whois']['krdomain'], orient='index', index=[0])
+    
+df.transpose() #판다스로 보기
+
+
+
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#인터넷주소자원 중 IP 주소의 등록정보 및 할당정보 조회
+#한국인터넷진흥원이 관리하는 인터넷주소자원인 IP 주소의 등록정보(네트워크 정보, 등록일, 등록인 이름, 관리자 연락처 등)를 조회
+
+
+warnings.filterwarnings('ignore')
+
+serviceKey = ''  #인증키
+
+query = '202.30.50.51'  #ip주소
+
+url = 'https://apis.data.go.kr/B551505/whois/ip_address?serviceKey={}&query={}&answer=json'.format(serviceKey, query)
+
+response = requests.get(url, verify=False)
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+
+r_data = json.loads(response.text)  #json 으로 받기
+#r_data
+
+#dict_data = xmltodict.parse(response.text) #xml을 json로 변환
+#json_data = json.dumps(dict_data, ensure_ascii=False)  #한글이 깨지면 ensure_ascii 코드를 False로 하면됨.
+#r_data = json.loads(json_data)  #json 변환
+
+
+#json 에서 DataFrame 변환시 All arrays must be of the same length 오류해결
+#해결방법은  orient = index를 넣어 주면은 해결된다.
+
+
+#user, korean, english 등으로 선택해서 가능
+
+try :
+    df = pd.DataFrame.from_dict(r_data['response']['whois']['korean']['user']['netinfo'], orient='index')  #구체적 정보보기
+except :
+    df = pd.DataFrame.from_dict(r_data['response']['whois']['korean']['user']['netinfo'], orient='index', index=[0]) #구체적 정보보기
+    
+df.transpose() #판다스로 보기
+
+
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#인터넷주소자원 중 AS번호의 등록정보 및 할당정보 조회	
+#한국인터넷진흥원이 관리하는 인터넷주소자원인 AS 번호의 등록정보(기관정보, 관리자 연락처 등)를 조회
+
+
+warnings.filterwarnings('ignore')
+
+serviceKey = ''  #인증키
+
+query = 'AS9700'  #ip주소
+
+url = 'https://apis.data.go.kr/B551505/whois/as_number?serviceKey={}&query={}&answer=json'.format(serviceKey, query)
+
+response = requests.get(url, verify=False)
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+
+r_data = json.loads(response.text)  #json 으로 받기
+#r_data
+
+#dict_data = xmltodict.parse(response.text) #xml을 json로 변환
+#json_data = json.dumps(dict_data, ensure_ascii=False)  #한글이 깨지면 ensure_ascii 코드를 False로 하면됨.
+#r_data = json.loads(json_data)  #json 변환
+
+
+#json 에서 DataFrame 변환시 All arrays must be of the same length 오류해결
+#해결방법은  orient = index를 넣어 주면은 해결된다.
+
+
+try :
+    df = pd.DataFrame.from_dict(r_data['response']['whois']['korean'], orient='index')  #구체적 정보보기
+except :
+    df = pd.DataFrame.from_dict(r_data['response']['whois']['korean'], orient='index', index=[0]) #구체적 정보보기
+    
+df.transpose() #판다스로 보기
+
+
+
+from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib
+import requests
+import json
+import pandas as pd
+from datetime import datetime,timedelta
+import warnings
+import xmltodict # 결과가 xml 형식으로 반환된다. 이것을 dict 로 바꿔주는 라이브러리다
+
+#IP주소/AS번호의 국가코드 조회
+#인터넷주소자원인 IP 주소와 AS 번호가 할당된 국가의 국가코드를 조회
+
+warnings.filterwarnings('ignore')
+
+serviceKey = ''  #인증키
+
+query = '202.30.50.51'  #ip주소
+
+url = 'https://apis.data.go.kr/B551505/whois/ipas_country_code?serviceKey={}&query={}&answer=json'.format(serviceKey, query)
+
+response = requests.get(url, verify=False)
+#HTTPSConnectionPool(host='www.work.go.kr', port=443): Max retries exceeded with url 
+# 오류 발견시 requests.get(url, verify=False) 로 넣어주면됨. 
+
+
+r_data = json.loads(response.text)  #json 으로 받기
+#r_data
+
+#dict_data = xmltodict.parse(response.text) #xml을 json로 변환
+#json_data = json.dumps(dict_data, ensure_ascii=False)  #한글이 깨지면 ensure_ascii 코드를 False로 하면됨.
+#r_data = json.loads(json_data)  #json 변환
+
+
+#json 에서 DataFrame 변환시 All arrays must be of the same length 오류해결
+#해결방법은  orient = index를 넣어 주면은 해결된다.
+
+
+try :
+    df = pd.DataFrame.from_dict(r_data['response']['whois'], orient='index')  #구체적 정보보기
+except :
+    df = pd.DataFrame.from_dict(r_data['response']['whois'], orient='index', index=[0]) #구체적 정보보기
+    
+df.transpose() #판다스로 보기
